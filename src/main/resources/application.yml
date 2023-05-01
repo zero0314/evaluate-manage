@@ -1,0 +1,56 @@
+server:
+  # 端口
+  port: 8004
+
+# 自定义文件上传路径
+file:
+  path: /root/public/
+
+
+# Sa-Token
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: token
+  # token有效期，单位s 默认30天, -1代表永不过期
+  timeout: 2592000
+  # token临时有效期 (指定时间内无操作就视为token过期) 单位: 秒
+  activity-timeout: -1
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: false
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: true
+  # token风格
+  #  token-style: simple-uuid
+  # 是否输出操作日志
+  is-log: false
+
+spring:
+  datasource:
+    # 数据源
+    name: com.alibaba.druid.pool.DruidDataSource
+    # 驱动
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # URL
+    url: jdbc:mysql://1.12.55.165:3306/evaluation?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    # 用户名
+    username: zero
+    # 密码
+    password: 1018yhYH.
+
+  servlet:
+    multipart:
+      enabled: true
+      # 最大上传文件大小
+      max-file-size: 10MB
+      # 最大下载文件大小
+      max-request-size: 10MB
+
+
+mybatis:
+  # xml路径
+  mapper-locations: classpath:mapper/*.xml
+  #配置
+  configuration:
+    # 启用驼峰规则
+    map-underscore-to-camel-case: true
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

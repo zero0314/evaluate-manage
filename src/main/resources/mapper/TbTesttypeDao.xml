@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero314.evaluatemanage.dao.TbTesttypeDao">
+
+    <resultMap id="BaseResultMap" type="com.zero314.evaluatemanage.entity.TbTesttype">
+        <!--@Table tb_testtype-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="weight" column="weight" jdbcType="NUMERIC"/>
+        <result property="dimensionId" column="dimension_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="query" resultMap="BaseResultMap">
+        select id,
+               name,
+               weight,
+               dimension_id
+        from tb_testtype
+        where id = #{id}
+    </select>
+
+    <!--分页查询-->
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+        id, name, weight, dimension_id from tb_testtype
+        <where>
+            <if test="entity.id != null">
+                and id = #{entity.id}
+            </if>
+            <if test="entity.name != null and entity.name != ''">
+                and name = #{entity.name}
+            </if>
+            <if test="entity.weight != null">
+                and weight = #{entity.weight}
+            </if>
+            <if test="entity.dimensionId != null">
+                and dimension_id = #{entity.dimensionId}
+            </if>
+        </where>
+        <if test="offset != null and size != null">
+            limit #{offset},#{size}
+        </if>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+        id, name, weight, dimension_id
+        from tb_testtype
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+            <if test="dimensionId != null">
+                and dimension_id = #{dimensionId}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from tb_testtype
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+            <if test="dimensionId != null">
+                and dimension_id = #{dimensionId}
+            </if>
+        </where>
+    </select>
+
+    <!--根据测试报告id和数据域id计算数据域得分-->
+    <select id="queryScore" resultType="java.lang.Double">
+        SELECT score
+        FROM (SELECT type_id AS id, SUM(score) AS score
+              FROM (SELECT type_id, ROUND((score * weight), 2) AS score
+                    FROM tb_testpoint
+                             JOIN
+                             (SELECT point_id, score FROM tb_testrecord WHERE report_id = #{reportId}) AS tb1
+                             ON tb1.point_id = tb_testpoint.id) AS tb2
+              GROUP BY type_id) AS tb3
+        WHERE id = #{typeId}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testtype(name, weight, dimension_id)
+        values (#{name}, #{weight}, #{dimensionId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testtype(name, weight, dimension_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.weight}, #{entity.dimensionId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testtype(name, weight, dimension_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.weight}, #{entity.dimensionId})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        weight = values(weight),
+        dimension_id = values(dimension_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update tb_testtype
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="weight != null">
+                weight = #{weight},
+            </if>
+            <if test="dimensionId != null">
+                dimension_id = #{dimensionId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete
+        from tb_testtype
+        where id = #{id}
+    </delete>
+
+</mapper>
+

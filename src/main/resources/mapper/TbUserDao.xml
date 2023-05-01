@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero314.evaluatemanage.dao.TbUserDao">
+
+    <resultMap id="BaseResultMap" type="com.zero314.evaluatemanage.entity.TbUser">
+        <!--@Table tb_user-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="headimg" column="headImg" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="query" resultMap="BaseResultMap">
+        select
+          id, username, password, headImg        from tb_user
+        where id = #{id}
+    </select>
+
+    <!--分页查询-->
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+          id, username, password, headImg        from tb_user
+        <where>
+            <if test="entity.id != null">
+                and id = #{entity.id}
+            </if>
+            <if test="entity.username != null and entity.username != ''">
+                and username = #{entity.username}
+            </if>
+            <if test="entity.password != null and entity.password != ''">
+                and password = #{entity.password}
+            </if>
+            <if test="entity.headimg != null and entity.headimg != ''">
+                and headImg = #{entity.headimg}
+            </if>
+        </where>
+        <if test="offset != null and size != null">
+                limit #{offset},#{size}
+        </if>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+          id, username, password, headImg
+        from tb_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="headimg != null and headimg != ''">
+                and headImg = #{headimg}
+            </if>
+        </where>
+    </select>
+    
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from tb_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="headimg != null and headimg != ''">
+                and headImg = #{headimg}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_user(username, password, headImg)
+        values (#{username}, #{password}, #{headimg})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_user(username, password, headImg)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.username}, #{entity.password}, #{entity.headimg})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_user(username, password, headImg)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.username}, #{entity.password}, #{entity.headimg})
+        </foreach>
+        on duplicate key update
+        username = values(username),
+        password = values(password),
+        headImg = values(headImg)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update tb_user
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="headimg != null and headimg != ''">
+                headImg = #{headimg},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete from tb_user where id = #{id}
+    </delete>
+
+</mapper>
+

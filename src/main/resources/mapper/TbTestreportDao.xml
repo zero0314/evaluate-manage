@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero314.evaluatemanage.dao.TbTestreportDao">
+
+    <resultMap id="BaseResultMap" type="com.zero314.evaluatemanage.entity.TbTestreport">
+        <!--@Table tb_testreport-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="finalpoint" column="finalpoint" jdbcType="NUMERIC"/>
+        <result property="dimensionpoint" column="dimensionpoint" jdbcType="VARCHAR"/>
+        <result property="typepoint" column="typepoint" jdbcType="VARCHAR"/>
+        <result property="suggestion" column="suggestion" jdbcType="VARCHAR"/>
+        <result property="bug" column="bug" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="VARCHAR"/>
+        <result property="endtime" column="endtime" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="query" resultMap="BaseResultMap">
+        select id,
+               finalpoint,
+               dimensionpoint,
+               typepoint,
+               suggestion,
+               bug,
+               createtime,
+               endtime,
+               user_id
+        from tb_testreport
+        where id = #{id}
+    </select>
+
+    <!--分页查询-->
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+        id, finalpoint, dimensionpoint, typepoint, suggestion, bug, createtime, endtime, user_id from tb_testreport
+        <where>
+            <if test="entity.id != null">
+                and id = #{entity.id}
+            </if>
+            <if test="entity.finalpoint != null">
+                and finalpoint = #{entity.finalpoint}
+            </if>
+            <if test="entity.dimensionpoint != null and entity.dimensionpoint != ''">
+                and dimensionpoint = #{entity.dimensionpoint}
+            </if>
+            <if test="entity.typepoint != null and entity.typepoint != ''">
+                and typepoint = #{entity.typepoint}
+            </if>
+            <if test="entity.suggestion != null and entity.suggestion != ''">
+                and suggestion = #{entity.suggestion}
+            </if>
+            <if test="entity.bug != null and entity.bug != ''">
+                and bug = #{entity.bug}
+            </if>
+            <if test="entity.createtime != null and entity.createtime != ''">
+                and createtime = #{entity.createtime}
+            </if>
+            <if test="entity.endtime != null and entity.endtime != ''">
+                and endtime = #{entity.endtime}
+            </if>
+            <if test="entity.userId != null">
+                and user_id = #{entity.userId}
+            </if>
+        </where>
+        <if test="offset != null and size != null">
+            limit #{offset},#{size}
+        </if>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+        id, finalpoint, dimensionpoint, typepoint, suggestion, bug, createtime, endtime, user_id
+        from tb_testreport
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="finalpoint != null">
+                and finalpoint = #{finalpoint}
+            </if>
+            <if test="dimensionpoint != null and dimensionpoint != ''">
+                and dimensionpoint = #{dimensionpoint}
+            </if>
+            <if test="typepoint != null and typepoint != ''">
+                and typepoint = #{typepoint}
+            </if>
+            <if test="suggestion != null and suggestion != ''">
+                and suggestion = #{suggestion}
+            </if>
+            <if test="bug != null and bug != ''">
+                and bug = #{bug}
+            </if>
+            <if test="createtime != null and createtime != ''">
+                and createtime = #{createtime}
+            </if>
+            <if test="endtime != null and endtime != ''">
+                and endtime = #{endtime}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from tb_testreport
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="finalpoint != null">
+                and finalpoint = #{finalpoint}
+            </if>
+            <if test="dimensionpoint != null and dimensionpoint != ''">
+                and dimensionpoint = #{dimensionpoint}
+            </if>
+            <if test="typepoint != null and typepoint != ''">
+                and typepoint = #{typepoint}
+            </if>
+            <if test="suggestion != null and suggestion != ''">
+                and suggestion = #{suggestion}
+            </if>
+            <if test="bug != null and bug != ''">
+                and bug = #{bug}
+            </if>
+            <if test="createtime != null and createtime != ''">
+                and createtime = #{createtime}
+            </if>
+            <if test="endtime != null and endtime != ''">
+                and endtime = #{endtime}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <!--根据用户id查询最近n次测试报告的模块分-->
+    <select id="queryHistory" resultMap="BaseResultMap">
+        SELECT id, dimensionpoint, createtime, endtime
+        FROM tb_testreport
+        WHERE user_id = #{userId}
+          AND endtime != ''
+        ORDER BY id DESC
+        LIMIT #{size}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testreport(finalpoint, dimensionpoint, typepoint, suggestion, bug, createtime, endtime, user_id)
+        values (#{finalpoint}, #{dimensionpoint}, #{typepoint}, #{suggestion}, #{bug}, #{createtime}, #{endtime},
+                #{userId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testreport(finalpoint, dimensionpoint, typepoint, suggestion, bug, createtime, endtime, user_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.finalpoint}, #{entity.dimensionpoint}, #{entity.typepoint}, #{entity.suggestion}, #{entity.bug},
+            #{entity.createtime}, #{entity.endtime}, #{entity.userId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testreport(finalpoint, dimensionpoint, typepoint, suggestion, bug, createtime, endtime, user_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.finalpoint}, #{entity.dimensionpoint}, #{entity.typepoint}, #{entity.suggestion}, #{entity.bug},
+            #{entity.createtime}, #{entity.endtime}, #{entity.userId})
+        </foreach>
+        on duplicate key update
+        finalpoint = values(finalpoint),
+        dimensionpoint = values(dimensionpoint),
+        typepoint = values(typepoint),
+        suggestion = values(suggestion),
+        bug = values(bug),
+        createtime = values(createtime),
+        endtime = values(endtime),
+        user_id = values(user_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update tb_testreport
+        <set>
+            <if test="finalpoint != null">
+                finalpoint = #{finalpoint},
+            </if>
+            <if test="dimensionpoint != null and dimensionpoint != ''">
+                dimensionpoint = #{dimensionpoint},
+            </if>
+            <if test="typepoint != null and typepoint != ''">
+                typepoint = #{typepoint},
+            </if>
+            <if test="suggestion != null and suggestion != ''">
+                suggestion = #{suggestion},
+            </if>
+            <if test="bug != null and bug != ''">
+                bug = #{bug},
+            </if>
+            <if test="createtime != null and createtime != ''">
+                createtime = #{createtime},
+            </if>
+            <if test="endtime != null and endtime != ''">
+                endtime = #{endtime},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete
+        from tb_testreport
+        where id = #{id}
+    </delete>
+
+</mapper>
+

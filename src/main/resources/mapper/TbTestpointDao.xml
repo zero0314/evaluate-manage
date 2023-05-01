@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero314.evaluatemanage.dao.TbTestpointDao">
+
+    <resultMap id="BaseResultMap" type="com.zero314.evaluatemanage.entity.TbTestpoint">
+        <!--@Table tb_testpoint-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="weight" column="weight" jdbcType="NUMERIC"/>
+        <result property="firstsuggestion" column="firstsuggestion" jdbcType="VARCHAR"/>
+        <result property="secondsuggestion" column="secondsuggestion" jdbcType="VARCHAR"/>
+        <result property="thirdsuggestion" column="thirdsuggestion" jdbcType="VARCHAR"/>
+        <result property="bug" column="bug" jdbcType="VARCHAR"/>
+        <result property="typeId" column="type_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="query" resultMap="BaseResultMap">
+        select id,
+               name,
+               weight,
+               firstsuggestion,
+               secondsuggestion,
+               thirdsuggestion,
+               bug,
+               type_id
+        from tb_testpoint
+        where id = #{id}
+    </select>
+
+    <!--分页查询-->
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+        id, name, weight, firstsuggestion, secondsuggestion, thirdsuggestion, bug, type_id from tb_testpoint
+        <where>
+            <if test="entity.id != null">
+                and id = #{entity.id}
+            </if>
+            <if test="entity.name != null and entity.name != ''">
+                and name = #{entity.name}
+            </if>
+            <if test="entity.weight != null">
+                and weight = #{entity.weight}
+            </if>
+            <if test="entity.firstsuggestion != null and entity.firstsuggestion != ''">
+                and firstsuggestion = #{entity.firstsuggestion}
+            </if>
+            <if test="entity.secondsuggestion != null and entity.secondsuggestion != ''">
+                and secondsuggestion = #{entity.secondsuggestion}
+            </if>
+            <if test="entity.thirdsuggestion != null and entity.thirdsuggestion != ''">
+                and thirdsuggestion = #{entity.thirdsuggestion}
+            </if>
+            <if test="entity.bug != null and entity.bug != ''">
+                and bug = #{entity.bug}
+            </if>
+            <if test="entity.typeId != null">
+                and type_id = #{entity.typeId}
+            </if>
+        </where>
+        <if test="offset != null and size != null">
+            limit #{offset},#{size}
+        </if>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+        id, name, weight, firstsuggestion, secondsuggestion, thirdsuggestion, bug, type_id
+        from tb_testpoint
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+            <if test="firstsuggestion != null and firstsuggestion != ''">
+                and firstsuggestion = #{firstsuggestion}
+            </if>
+            <if test="secondsuggestion != null and secondsuggestion != ''">
+                and secondsuggestion = #{secondsuggestion}
+            </if>
+            <if test="thirdsuggestion != null and thirdsuggestion != ''">
+                and thirdsuggestion = #{thirdsuggestion}
+            </if>
+            <if test="bug != null and bug != ''">
+                and bug = #{bug}
+            </if>
+            <if test="typeId != null">
+                and type_id = #{typeId}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAllIdAndName" resultMap="BaseResultMap">
+        select id,
+               name
+        from tb_testpoint
+        order by id
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from tb_testpoint
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+            <if test="firstsuggestion != null and firstsuggestion != ''">
+                and firstsuggestion = #{firstsuggestion}
+            </if>
+            <if test="secondsuggestion != null and secondsuggestion != ''">
+                and secondsuggestion = #{secondsuggestion}
+            </if>
+            <if test="thirdsuggestion != null and thirdsuggestion != ''">
+                and thirdsuggestion = #{thirdsuggestion}
+            </if>
+            <if test="bug != null and bug != ''">
+                and bug = #{bug}
+            </if>
+            <if test="typeId != null">
+                and type_id = #{typeId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testpoint(name, weight, firstsuggestion, secondsuggestion, thirdsuggestion, bug, type_id)
+        values (#{name}, #{weight}, #{firstsuggestion}, #{secondsuggestion}, #{thirdsuggestion}, #{bug}, #{typeId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testpoint(name, weight, firstsuggestion, secondsuggestion, thirdsuggestion, bug, type_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.weight}, #{entity.firstsuggestion}, #{entity.secondsuggestion},
+            #{entity.thirdsuggestion}, #{entity.bug}, #{entity.typeId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_testpoint(name, weight, firstsuggestion, secondsuggestion, thirdsuggestion, bug, type_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.weight}, #{entity.firstsuggestion}, #{entity.secondsuggestion},
+            #{entity.thirdsuggestion}, #{entity.bug}, #{entity.typeId})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        weight = values(weight),
+        firstsuggestion = values(firstsuggestion),
+        secondsuggestion = values(secondsuggestion),
+        thirdsuggestion = values(thirdsuggestion),
+        bug = values(bug),
+        type_id = values(type_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update tb_testpoint
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="weight != null">
+                weight = #{weight},
+            </if>
+            <if test="firstsuggestion != null and firstsuggestion != ''">
+                firstsuggestion = #{firstsuggestion},
+            </if>
+            <if test="secondsuggestion != null and secondsuggestion != ''">
+                secondsuggestion = #{secondsuggestion},
+            </if>
+            <if test="thirdsuggestion != null and thirdsuggestion != ''">
+                thirdsuggestion = #{thirdsuggestion},
+            </if>
+            <if test="bug != null and bug != ''">
+                bug = #{bug},
+            </if>
+            <if test="typeId != null">
+                type_id = #{typeId},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete
+        from tb_testpoint
+        where id = #{id}
+    </delete>
+
+</mapper>
+

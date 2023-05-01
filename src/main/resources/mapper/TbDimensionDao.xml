@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero314.evaluatemanage.dao.TbDimensionDao">
+
+    <resultMap id="BaseResultMap" type="com.zero314.evaluatemanage.entity.TbDimension">
+        <!--@Table tb_dimension-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="weight" column="weight" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="query" resultMap="BaseResultMap">
+        select id,
+               name,
+               weight
+        from tb_dimension
+        where id = #{id}
+    </select>
+
+    <!--分页查询-->
+    <select id="queryPage" resultMap="BaseResultMap">
+        select
+        id, name, weight from tb_dimension
+        <where>
+            <if test="entity.id != null">
+                and id = #{entity.id}
+            </if>
+            <if test="entity.name != null and entity.name != ''">
+                and name = #{entity.name}
+            </if>
+            <if test="entity.weight != null">
+                and weight = #{entity.weight}
+            </if>
+        </where>
+        <if test="offset != null and size != null">
+            limit #{offset},#{size}
+        </if>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryList" resultMap="BaseResultMap">
+        select
+        id, name, weight
+        from tb_dimension
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from tb_dimension
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+        </where>
+    </select>
+
+    <!--根据测试报告id和维度id计算维度得分-->
+    <select id="queryScore" resultType="java.lang.Double">
+        SELECT score
+        FROM (SELECT id, SUM(score) AS score
+              FROM (SELECT dimension_id AS id, score
+                    FROM tb_testtype
+                             JOIN
+                         (SELECT type_id, SUM(score) AS score
+                          FROM (SELECT type_id, ROUND((score * weight), 2) AS score
+                                FROM tb_testpoint
+                                         JOIN
+                                         (SELECT point_id, score FROM tb_testrecord WHERE report_id = #{reportId}) AS tb1
+                                         ON tb1.point_id = tb_testpoint.id) AS tb2
+                          GROUP BY type_id) AS tb3
+                         ON id = type_id) AS tb4
+              GROUP BY id) AS tb5
+        WHERE id = #{dimensionId}
+    </select>
+
+    <!--根据测试报告id计算总分-->
+    <select id="queryFinalScore" resultType="java.lang.Double">
+        SELECT SUM(score) AS score
+        FROM (SELECT id, SUM(score) AS score
+              FROM (SELECT dimension_id AS id, score
+                    FROM tb_testtype
+                             JOIN
+                         (SELECT type_id, SUM(score) AS score
+                          FROM (SELECT type_id, ROUND((score * weight), 2) AS score
+                                FROM tb_testpoint
+                                         JOIN
+                                         (SELECT point_id, score FROM tb_testrecord WHERE report_id = #{reportId}) AS tb1
+                                         ON tb1.point_id = tb_testpoint.id) AS tb2
+                          GROUP BY type_id) AS tb3
+                         ON id = type_id) AS tb4
+              GROUP BY id) AS tb5
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_dimension(name, weight)
+        values (#{name}, #{weight})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_dimension(name, weight)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.weight})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into tb_dimension(name, weight)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.name}, #{entity.weight})
+        </foreach>
+        on duplicate key update
+        name = values(name),
+        weight = values(weight)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update tb_dimension
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="weight != null">
+                weight = #{weight},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete
+        from tb_dimension
+        where id = #{id}
+    </delete>
+
+</mapper>
+
