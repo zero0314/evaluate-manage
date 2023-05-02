@@ -186,7 +186,7 @@ public class TbTestreportServiceImpl implements TbTestreportService {
     @Override
     public void export(Integer id, HttpServletResponse response) {
         //企业信息
-        List<TbEnterprise> enterpriseList = enterpriseDao.queryList(new TbEnterprise(null, null, null, null, null, null, null, null, StpUtil.getLoginIdAsInt()));
+        List<TbEnterprise> enterpriseList = enterpriseDao.queryList(new TbEnterprise(null, null, null,null, null, null, null, null, null, StpUtil.getLoginIdAsInt()));
         TbEnterprise enterprise = enterpriseList.get(0);
         if (enterprise != null) {
             //测试报告信息
@@ -228,24 +228,30 @@ public class TbTestreportServiceImpl implements TbTestreportService {
 
             row = sheet.createRow(4);
             cell = row.createCell(0);
+            cell.setCellValue("企业地址");
+            cell = row.createCell(1);
+            cell.setCellValue(enterprise.getLocation());
+
+            row = sheet.createRow(5);
+            cell = row.createCell(0);
             cell.setCellValue("开始时间");
             cell = row.createCell(1);
             cell.setCellValue(report.getCreatetime());
 
             if (report.getEndtime() != null) {
-                row = sheet.createRow(5);
+                row = sheet.createRow(6);
                 cell = row.createCell(0);
                 cell.setCellValue("结束时间");
                 cell = row.createCell(1);
                 cell.setCellValue(report.getEndtime());
 
-                row = sheet.createRow(6);
+                row = sheet.createRow(7);
                 cell = row.createCell(0);
                 cell.setCellValue("总分");
                 cell = row.createCell(1);
                 cell.setCellValue(report.getFinalpoint());
 
-                row = sheet.createRow(7);
+                row = sheet.createRow(8);
                 cell = row.createCell(0);
                 cell.setCellValue("维度");
                 cell = row.createCell(1);
@@ -257,21 +263,21 @@ public class TbTestreportServiceImpl implements TbTestreportService {
                 int size = jsonArray.size();
                 for (int i = 0; i < size; i++) {
                     JSONObject json = jsonArray.getJSONObject(i);
-                    row = sheet.createRow(7 + i + 1);
+                    row = sheet.createRow(8 + i + 1);
                     cell = row.createCell(0);
                     cell.setCellValue(json.getString("name"));
                     cell = row.createCell(1);
                     cell.setCellValue(json.getString("score"));
                 }
 
-                row = sheet.createRow(7 + size + 1);
+                row = sheet.createRow(8 + size + 1);
                 cell = row.createCell(0);
                 cell.setCellValue("评价类别");
                 cell = row.createCell(1);
                 cell.setCellValue("得分");
 
                 //遍历评价类别
-                int index = 7 + size + 1;
+                int index = 8 + size + 1;
                 String typepoint = report.getTypepoint();
                 jsonArray = JSONArray.parseArray(typepoint);
                 size = jsonArray.size();

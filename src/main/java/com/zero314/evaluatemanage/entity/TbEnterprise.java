@@ -7,7 +7,7 @@ import lombok.*;
  * 企业表(TbEnterprise)实体类
  *
  * @author yh
- * @since 2023-05-01 00:20:42
+ * @since 2023-05-02 22:51:28
  */
 @Getter
 @Setter
@@ -15,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class TbEnterprise implements Serializable {
-    private static final long serialVersionUID = 156540676192108331L;
+    private static final long serialVersionUID = 222821018464441582L;
     /**
      * 主键
      */
@@ -32,6 +32,10 @@ public class TbEnterprise implements Serializable {
      * 联系电话
      */
     private String telephone;
+    /**
+     * 行业
+     */
+    private String industry;
     /**
      * 企业地址
      */

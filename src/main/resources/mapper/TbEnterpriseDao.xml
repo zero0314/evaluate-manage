@@ -8,6 +8,7 @@
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="representative" column="representative" jdbcType="VARCHAR"/>
         <result property="telephone" column="telephone" jdbcType="VARCHAR"/>
+        <result property="industry" column="industry" jdbcType="VARCHAR"/>
         <result property="location" column="location" jdbcType="VARCHAR"/>
         <result property="scale" column="scale" jdbcType="VARCHAR"/>
         <result property="registeredcapital" column="Registeredcapital" jdbcType="VARCHAR"/>
@@ -18,14 +19,14 @@
     <!--查询单个-->
     <select id="query" resultMap="BaseResultMap">
         select
-          id, name, representative, telephone, location, scale, Registeredcapital, date, user_id        from tb_enterprise
+          id, name, representative, telephone, industry, location, scale, Registeredcapital, date, user_id        from tb_enterprise
         where id = #{id}
     </select>
 
     <!--分页查询-->
     <select id="queryPage" resultMap="BaseResultMap">
         select
-          id, name, representative, telephone, location, scale, Registeredcapital, date, user_id        from tb_enterprise
+          id, name, representative, telephone, industry, location, scale, Registeredcapital, date, user_id        from tb_enterprise
         <where>
             <if test="entity.id != null">
                 and id = #{entity.id}
@@ -38,6 +39,9 @@
             </if>
             <if test="entity.telephone != null and entity.telephone != ''">
                 and telephone = #{entity.telephone}
+            </if>
+            <if test="entity.industry != null and entity.industry != ''">
+                and industry = #{entity.industry}
             </if>
             <if test="entity.location != null and entity.location != ''">
                 and location = #{entity.location}
@@ -63,7 +67,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryList" resultMap="BaseResultMap">
         select
-          id, name, representative, telephone, location, scale, Registeredcapital, date, user_id
+          id, name, representative, telephone, industry, location, scale, Registeredcapital, date, user_id
         from tb_enterprise
         <where>
             <if test="id != null">
@@ -77,6 +81,9 @@
             </if>
             <if test="telephone != null and telephone != ''">
                 and telephone = #{telephone}
+            </if>
+            <if test="industry != null and industry != ''">
+                and industry = #{industry}
             </if>
             <if test="location != null and location != ''">
                 and location = #{location}
@@ -113,6 +120,9 @@
             <if test="telephone != null and telephone != ''">
                 and telephone = #{telephone}
             </if>
+            <if test="industry != null and industry != ''">
+                and industry = #{industry}
+            </if>
             <if test="location != null and location != ''">
                 and location = #{location}
             </if>
@@ -133,28 +143,29 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into tb_enterprise(name, representative, telephone, location, scale, Registeredcapital, date, user_id)
-        values (#{name}, #{representative}, #{telephone}, #{location}, #{scale}, #{registeredcapital}, #{date}, #{userId})
+        insert into tb_enterprise(name, representative, telephone, industry, location, scale, Registeredcapital, date, user_id)
+        values (#{name}, #{representative}, #{telephone}, #{industry}, #{location}, #{scale}, #{registeredcapital}, #{date}, #{userId})
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into tb_enterprise(name, representative, telephone, location, scale, Registeredcapital, date, user_id)
+        insert into tb_enterprise(name, representative, telephone, industry, location, scale, Registeredcapital, date, user_id)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.name}, #{entity.representative}, #{entity.telephone}, #{entity.location}, #{entity.scale}, #{entity.registeredcapital}, #{entity.date}, #{entity.userId})
+        (#{entity.name}, #{entity.representative}, #{entity.telephone}, #{entity.industry}, #{entity.location}, #{entity.scale}, #{entity.registeredcapital}, #{entity.date}, #{entity.userId})
         </foreach>
     </insert>
 
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into tb_enterprise(name, representative, telephone, location, scale, Registeredcapital, date, user_id)
+        insert into tb_enterprise(name, representative, telephone, industry, location, scale, Registeredcapital, date, user_id)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.name}, #{entity.representative}, #{entity.telephone}, #{entity.location}, #{entity.scale}, #{entity.registeredcapital}, #{entity.date}, #{entity.userId})
+            (#{entity.name}, #{entity.representative}, #{entity.telephone}, #{entity.industry}, #{entity.location}, #{entity.scale}, #{entity.registeredcapital}, #{entity.date}, #{entity.userId})
         </foreach>
         on duplicate key update
         name = values(name),
         representative = values(representative),
         telephone = values(telephone),
+        industry = values(industry),
         location = values(location),
         scale = values(scale),
         Registeredcapital = values(Registeredcapital),
@@ -174,6 +185,9 @@
             </if>
             <if test="telephone != null and telephone != ''">
                 telephone = #{telephone},
+            </if>
+            <if test="industry != null and industry != ''">
+                industry = #{industry},
             </if>
             <if test="location != null and location != ''">
                 location = #{location},

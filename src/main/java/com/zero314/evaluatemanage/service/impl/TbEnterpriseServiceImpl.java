@@ -67,7 +67,7 @@ public class TbEnterpriseServiceImpl implements TbEnterpriseService {
      */
     @Override
     public Result queryBind() {
-        TbEnterprise enterprise = new TbEnterprise(null, null, null, null, null, null, null, null, StpUtil.getLoginIdAsInt());
+        TbEnterprise enterprise = new TbEnterprise(null, null, null, null, null,null, null, null, null, StpUtil.getLoginIdAsInt());
         List<TbEnterprise> list = this.tbEnterpriseDao.queryList(enterprise);
         Assert.isTrue(list.size()==1,"未绑定企业");
         return Result.data(list.get(0));
